@@ -18,9 +18,6 @@ d2					res 1
 d3					res	1
 STATUS_TEMP			res	1
 W_TEMP				res	1
-color_red			res 1
-color_green			res 1
-color_blue			res 1
 
 
 	; imported from the display module:
@@ -123,57 +120,24 @@ _init
 	clrf	rotary_new_state
 	clrf	rotary_last_state
 	clrf	rotary_result
-	; start with red
-	movlw	.255
-	movwf	color_red
-	clrf	color_green
-	clrf	color_blue
+
 
 _main
 
-	; test
-	
-	;movlw	'W'
-	;call	Display_write_char
-	;movlw	'e'
-	;call	Display_write_char
-	;movlw	'l'
-	;call	Display_write_char
-	;movlw	'c'
-	;call	Display_write_char
-	;movlw	'o'
-	;call	Display_write_char
-	;movlw	'm'
-	;call	Display_write_char
-	;movlw	'e'
-	;call	Display_write_char
-	;movlw	'!'
-	;call	Display_write_char
-	;movlw	' '
-	;call	Display_write_char
-	;movlw	':'
-	;;call	Display_write_char
-	;movlw	'-'
-	;call	Display_write_char
-	;movlw	')'
-	;call	Display_write_char
-
-	;movfw	counter
-	;call	Display_digit_char
-	;movlw	' '
-	;call	Display_write_char
-
-
+	; if rotary encoder has changed?
 	btfss	rotary_result,0
-	goto	_main
+	goto	_main	; no change, to back to start
 
-	call	RotaryChanged ; change detected, handle it
+	; yes it has changed...
+	call	RotaryChanged ; handle it change
 
+	; now display changed state
 	movlw	.0
 	call	Display_set_pos_line1
 	movfw	counter
 	call	Display_digit_char
 
+	; done
 	goto	_main
 
 ; routine to handle rotary change as defined in rotary_result
@@ -190,7 +154,6 @@ RotaryChanged_ccw
 RotaryChanged_done
 	clrf	rotary_result ; result consumed. Clear register
 	return
-
 
 _interrupt
 	; save context
@@ -308,7 +271,6 @@ _delay_250ms_0
 
 			;4 cycles (including call)
 	return
-	
 
 
 Delay_50ms
